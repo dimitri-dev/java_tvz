@@ -99,8 +99,8 @@ public class MockData {
                 new Deliverer[] {deliverer3});
 
         var order1 = new Order(restaurant1, new Meal[] {meal1, meal1}, deliverer1, LocalDateTime.now());
-        var order2 = new Order(restaurant2, new Meal[] {meal2, meal2, meal2, meal2}, deliverer2, LocalDateTime.now());
-        var order3 = new Order(restaurant3, new Meal[] {meal3, meal3, meal3, meal3, meal3}, deliverer3, LocalDateTime.now());
+        var order2 = new TrackableOrder(restaurant2, new Meal[] {meal2, meal2, meal2, meal2}, deliverer2, LocalDateTime.now());
+        var order3 = new TrackableOrder(restaurant3, new Meal[] {meal3, meal3, meal3, meal3, meal3}, deliverer3, LocalDateTime.now());
 
         return new Order[] { order1, order2, order3 };
     }

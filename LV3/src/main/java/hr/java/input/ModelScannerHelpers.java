@@ -75,6 +75,10 @@ class ModelScannerHelpers {
         return BaseScannerHelpers.ReadInt(scanner, "Contains Dairy", Map.of(1, "Yes",2, "No")) == 1;
     }
 
+    static Boolean ReadTrackable(Scanner scanner) {
+        return BaseScannerHelpers.ReadInt(scanner, "Is Trackable", Map.of(1, "Yes",2, "No")) == 1;
+    }
+
     static LocalDate GetCurrentDate() {
         return LocalDate.now();
     }

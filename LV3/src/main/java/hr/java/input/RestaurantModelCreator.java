@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 import static hr.java.input.ModelScannerChoice.*;
@@ -13,6 +14,12 @@ import static hr.java.input.ModelScannerHelpers.*;
 
 public class RestaurantModelCreator {
     private static final Logger logger = LoggerFactory.getLogger(RestaurantModelCreator.class);
+    private static final ArrayList<String> forbiddenMealNameWords = new ArrayList<String>() {{
+        add("nešto");
+        add("takvo");
+        add("lijepo");
+        add("ružno");
+    }};
 
     public static Address CreateAddress(Scanner scanner) {
         logger.info("Started creating an address");
@@ -90,6 +97,12 @@ public class RestaurantModelCreator {
                 throw new DuplicateEntryException("A meal with the same name already exists.");
             }
 
+            var forbiddenEntries = forbiddenMealNameWords.stream().filter(name::contains).toArray();
+
+            if (forbiddenEntries.length > 0) {
+                throw new ForbiddenInputException("Meal name contains forbidden words: " + Arrays.toString(forbiddenEntries), Meal.class.getName(), "name");
+            }
+
             System.out.println("Input Meal information");
             var price = ReadPrice(scanner);
 
@@ -140,9 +153,13 @@ public class RestaurantModelCreator {
             logger.error(e.getMessage());
             System.out.println(e.getMessage());
             System.out.println("Please try again.");
-
-            return CreateMeal(scanner, existingCategories, existingIngredients, existingMeals);
+        } catch (ForbiddenInputException e) {
+            logger.warn(e.getMessage());
+            System.out.println(e.getMessage());
+            System.out.println("Please try again.");
         }
+        
+        return CreateMeal(scanner, existingCategories, existingIngredients, existingMeals);
     }
 
     public static Restaurant CreateRestaurant(Scanner scanner, Meal[] existingMeals, Chef[] existingChefs, Waiter[] existingWaiters, Deliverer[] existingDeliverers, ArrayList<Restaurant> existingRestaurants) {
@@ -180,8 +197,14 @@ public class RestaurantModelCreator {
         var meals = ChooseMeals(scanner, restaurant.getMeals());
         var deliverer = ChooseDeliverer(scanner, restaurant.getDeliverers());
         var deliveryDateAndTime = GetCurrentDateTime(); // ReadDateTime(scanner);
+        var trackable = ReadTrackable(scanner);
 
         logger.info("Order created successfully");
-        return new Order(restaurant, meals, deliverer, deliveryDateAndTime);
+
+        if (trackable) {
+            return new TrackableOrder(restaurant, meals, deliverer, deliveryDateAndTime);
+        } else {
+            return new Order(restaurant, meals, deliverer, deliveryDateAndTime);
+        }
     }
 }
