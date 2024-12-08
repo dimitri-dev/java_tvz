@@ -5,8 +5,11 @@ import hr.java.restaurant.model.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Random;
 
 public class MockData {
+    private static Random random = new Random();
+
     public static Person[] createStaff() {
         var chef1 = new ChefBuilder().setFirstName("John").setLastName("Smith").setContract(new Contract(new BigDecimal(100000), LocalDate.now(), LocalDate.now().plusYears(1), Contract.ContractConstants.FULL_TIME)).createChef();
         var chef2 = new ChefBuilder().setFirstName("Alexandra").setLastName("Polly").setContract(new Contract(new BigDecimal(77000), LocalDate.now(), LocalDate.now().plusYears(1), Contract.ContractConstants.FULL_TIME)).createChef();
@@ -16,9 +19,9 @@ public class MockData {
         var waiter2 = new WaiterBuilder().setFirstName("Ilija").setLastName("Dostojevsky").setContract(new Contract(new BigDecimal(51000), LocalDate.now(), LocalDate.now().plusYears(1), Contract.ContractConstants.PART_TIME)).createWaiter();
         var waiter3 = new WaiterBuilder().setFirstName("Marin").setLastName("Krešo").setContract(new Contract(new BigDecimal(44000), LocalDate.now(), LocalDate.now().plusYears(1), Contract.ContractConstants.FULL_TIME)).createWaiter();
 
-        var deliverer1 = new DelivererBuilder().setFirstName("Velimir").setLastName("Kućanik").setContract(new Contract(new BigDecimal(54300), LocalDate.now(), LocalDate.now().plusYears(1), Contract.ContractConstants.FULL_TIME)).createDeliverer();
-        var deliverer2 = new DelivererBuilder().setFirstName("Igor").setLastName("Smiljan").setContract(new Contract(new BigDecimal(41000), LocalDate.now(), LocalDate.now().plusYears(1), Contract.ContractConstants.FULL_TIME)).createDeliverer();
-        var deliverer3 = new DelivererBuilder().setFirstName("Qiyanna").setLastName("Barbarossa").setContract(new Contract(new BigDecimal(66000), LocalDate.now(), LocalDate.now().plusYears(1), Contract.ContractConstants.FULL_TIME)).createDeliverer();
+        var deliverer1 = new DelivererBuilder().setFirstName("Velimir").setLastName("Kućanik").setContract(new Contract(new BigDecimal(54300), LocalDate.now(), LocalDate.now().plusYears(1), Contract.ContractConstants.FULL_TIME)).setType(GlovoDeliverer.delivererType).createDeliverer();
+        var deliverer2 = new DelivererBuilder().setFirstName("Igor").setLastName("Smiljan").setContract(new Contract(new BigDecimal(41000), LocalDate.now(), LocalDate.now().plusYears(1), Contract.ContractConstants.FULL_TIME)).setType(WoltDeliverer.delivererType).createDeliverer();
+        var deliverer3 = new DelivererBuilder().setFirstName("Petar").setLastName("Krešimir").setContract(new Contract(new BigDecimal(66000), LocalDate.now(), LocalDate.now().plusYears(1), Contract.ContractConstants.FULL_TIME)).setType(GlovoDeliverer.delivererType).createDeliverer();
 
         return new Person[] { chef1, chef2, chef3, waiter1, waiter2, waiter3, deliverer1, deliverer2, deliverer3 };
     }
@@ -50,7 +53,6 @@ public class MockData {
     }
 
     public static Order[] createOrders() {
-        // Add 3 categories to ArrayList
         var category1 = new CategoryBuilder().setName("Desert").setDescription("Samo deserti (i suhi)").createCategory();
         var category2 = new CategoryBuilder().setName("Meso").setDescription("Samo mesnati proizvodi").createCategory();
         var category3 = new CategoryBuilder().setName("Mliječno").setDescription("Samo mliječni proizvodi").createCategory();
@@ -73,35 +75,52 @@ public class MockData {
         var waiter2 = new WaiterBuilder().setFirstName("Ilija").setLastName("Dostojevsky").setContract(new Contract(new BigDecimal(51000), LocalDate.now(), LocalDate.now().plusYears(1), Contract.ContractConstants.PART_TIME)).createWaiter();
         var waiter3 = new WaiterBuilder().setFirstName("Marin").setLastName("Krešo").setContract(new Contract(new BigDecimal(44000), LocalDate.now(), LocalDate.now().plusYears(1), Contract.ContractConstants.FULL_TIME)).createWaiter();
 
-        var deliverer1 = new DelivererBuilder().setFirstName("Velimir").setLastName("Kućanik").setContract(new Contract(new BigDecimal(54300), LocalDate.now(), LocalDate.now().plusYears(1), Contract.ContractConstants.FULL_TIME)).createDeliverer();
-        var deliverer2 = new DelivererBuilder().setFirstName("Igor").setLastName("Smiljan").setContract(new Contract(new BigDecimal(41000), LocalDate.now(), LocalDate.now().plusYears(1), Contract.ContractConstants.FULL_TIME)).createDeliverer();
-        var deliverer3 = new DelivererBuilder().setFirstName("Qiyanna").setLastName("Barbarossa").setContract(new Contract(new BigDecimal(66000), LocalDate.now(), LocalDate.now().plusYears(1), Contract.ContractConstants.FULL_TIME)).createDeliverer();
+        var deliverer1 = new DelivererBuilder().setFirstName("Velimir").setLastName("Kućanik").setContract(new Contract(new BigDecimal(12000), LocalDate.now(), LocalDate.now().plusYears(1), Contract.ContractConstants.FULL_TIME)).setType(GlovoDeliverer.delivererType).createDeliverer();
+        var deliverer2 = new DelivererBuilder().setFirstName("Igor").setLastName("Smiljan").setContract(new Contract(new BigDecimal(12000), LocalDate.now(), LocalDate.now().plusYears(1), Contract.ContractConstants.FULL_TIME)).setType(WoltDeliverer.delivererType).createDeliverer();
+        var deliverer3 = new DelivererBuilder().setFirstName("Petar").setLastName("Krešimir").setContract(new Contract(new BigDecimal(12000), LocalDate.now(), LocalDate.now().plusYears(1), Contract.ContractConstants.FULL_TIME)).setType(GlovoDeliverer.delivererType).createDeliverer();
+        var deliverer4 = new DelivererBuilder().setFirstName("Qiyanna").setLastName("Barbarossa").setContract(new Contract(new BigDecimal(12000), LocalDate.now(), LocalDate.now().plusYears(1), Contract.ContractConstants.FULL_TIME)).setType(TvzDeliverer.delivererType).createDeliverer();
 
         var address1 = new AddressBuilder().setStreet("Biskvit").setHouseNumber("10").setCity("Hladnjača").setPostalCode("30100").createAddress();
         var restaurant1 = new Restaurant("Umirem od slatkoće", address1,
                 new Meal[] {meal1},
                 new Chef[] {chef1},
                 new Waiter[] {waiter1},
-                new Deliverer[] {deliverer1});
+                new Deliverer[] {deliverer1, deliverer2, deliverer3, deliverer4});
 
         var address2 = new AddressBuilder().setStreet("Bascarsija").setHouseNumber("1").setCity("Sarajevo").setPostalCode("55000").createAddress();
         var restaurant2 = new Restaurant("Cevabdzinica broj 1", address2,
                 new Meal[] {meal2},
                 new Chef[] {chef2},
                 new Waiter[] {waiter2},
-                new Deliverer[] {deliverer2});
+                new Deliverer[] {deliverer1, deliverer2, deliverer3, deliverer4});
 
         var address3 = new AddressBuilder().setStreet("Bosanska ulica").setHouseNumber("91").setCity("Pitomača").setPostalCode("11000").createAddress();
         var restaurant3 = new Restaurant("Bosanske pite", address3,
                 new Meal[] {meal3},
                 new Chef[] {chef3},
                 new Waiter[] {waiter3},
-                new Deliverer[] {deliverer3});
+                new Deliverer[] {deliverer1, deliverer2, deliverer3, deliverer4});
 
-        var order1 = new Order(restaurant1, new Meal[] {meal1, meal1}, deliverer1, LocalDateTime.now());
-        var order2 = new Order(restaurant2, new Meal[] {meal2, meal2, meal2, meal2}, deliverer2, LocalDateTime.now());
-        var order3 = new Order(restaurant3, new Meal[] {meal3, meal3, meal3, meal3, meal3}, deliverer3, LocalDateTime.now());
+        var order1 = new Order(restaurant1, new Meal[] {meal1, meal1}, deliverer1, RandomDateTime());
+        var order2 = new Order(restaurant1, new Meal[] {meal1, meal1}, deliverer2, RandomDateTime());
+        var order3 = new Order(restaurant1, new Meal[] {meal1, meal1}, deliverer4, RandomDateTime());
+        var order4 = new Order(restaurant2, new Meal[] {meal2, meal2, meal2, meal2}, deliverer2, RandomDateTime());
+        var order5 = new Order(restaurant2, new Meal[] {meal2, meal2, meal2, meal2}, deliverer3, RandomDateTime());
+        var order6 = new Order(restaurant3, new Meal[] {meal3, meal3, meal3, meal3, meal3}, deliverer3, RandomDateTime());
+        var order7 = new Order(restaurant3, new Meal[] {meal3, meal3, meal3, meal3, meal3}, deliverer4, RandomDateTime());
+        var order8 = new Order(restaurant3, new Meal[] {meal3, meal3, meal3, meal3, meal3}, deliverer2, RandomDateTime());
+        var order9 = new Order(restaurant3, new Meal[] {meal3, meal3, meal3, meal3, meal3}, deliverer1, RandomDateTime());
 
-        return new Order[] { order1, order2, order3 };
+        return new Order[] { order1, order2, order3, order4, order5, order6, order7, order8, order9 };
+    }
+
+    private static LocalDateTime RandomDateTime()
+    {
+        // 50% it's in the past
+        if (random.nextDouble() < 0.50) {
+            return LocalDateTime.now().minusMinutes((long) (Math.random() * 60) + 1);
+        }
+
+        return LocalDateTime.now().plusMinutes((long) (Math.random() * 60) + 1);
     }
 }

@@ -5,6 +5,7 @@ public class DelivererBuilder {
     private String lastName;
     private Contract contract;
     private Bonus bonus;
+    private String type;
 
     public DelivererBuilder setFirstName(String firstName) {
         this.firstName = firstName;
@@ -26,7 +27,23 @@ public class DelivererBuilder {
         return this;
     }
 
+    public DelivererBuilder setType(String type) {
+        this.type = type;
+        return this;
+    }
+
     public Deliverer createDeliverer() {
-        return new Deliverer(firstName, lastName, contract, bonus);
+        switch (type) {
+            case GlovoDeliverer.delivererType -> {
+                return new GlovoDeliverer(firstName, lastName, contract, bonus);
+            }
+            case WoltDeliverer.delivererType -> {
+                return new WoltDeliverer(firstName, lastName, contract, bonus);
+            }
+            case TvzDeliverer.delivererType -> {
+                return new TvzDeliverer(firstName, lastName, contract, bonus);
+            }
+            default -> throw new IllegalArgumentException("Invalid deliverer type: " + type);
+        }
     }
 }

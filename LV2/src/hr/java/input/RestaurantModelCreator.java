@@ -38,8 +38,9 @@ public class RestaurantModelCreator {
         var lastName = ReadLastName(scanner);
         var contract = CreateContract(scanner);
         var bonus = CreateBonus(scanner);
+        var delivererType = ChooseDelivererType(scanner);
 
-        return new DelivererBuilder().setFirstName(firstName).setLastName(lastName).setContract(contract).setBonus(bonus).createDeliverer();
+        return new DelivererBuilder().setFirstName(firstName).setLastName(lastName).setContract(contract).setBonus(bonus).setType(delivererType).createDeliverer();
     }
 
     public static Waiter CreateWaiter(Scanner scanner) {

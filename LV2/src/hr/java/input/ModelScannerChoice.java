@@ -163,9 +163,24 @@ public class ModelScannerChoice {
     }
 
     static int ChooseContractType(Scanner scanner) {
-        var valuesMap = Contract.ContractConstants.values;
+        Map<Integer, String> values = Map.of(
+                1, GlovoDeliverer.delivererType,
+                2, WoltDeliverer.delivererType,
+                3, TvzDeliverer.delivererType
+        );
 
-        return BaseScannerHelpers.ReadInt(scanner, "Contract type", valuesMap);
+        return BaseScannerHelpers.ReadInt(scanner, "Contract type", values);
+    }
+
+    // TODO: Don't forget to add future deliverer types here.
+    static String ChooseDelivererType(Scanner scanner) {
+        Map<Integer, String> values = Map.of(
+                1, GlovoDeliverer.delivererType,
+                2, WoltDeliverer.delivererType,
+                3, TvzDeliverer.delivererType
+        );
+
+        return values.get(BaseScannerHelpers.ReadInt(scanner, "Deliverer type", values));
     }
 
     static int ChooseMealType(Scanner scanner) {

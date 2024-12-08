@@ -76,5 +76,10 @@ public class Order extends Entity {
 
     public void setDeliveryDateAndTime(LocalDateTime deliveryDateAndTime) {
         this.deliveryDateAndTime = deliveryDateAndTime;
+
+        // We will support this. If the delivery date and time is in the past, we will increase the delivered count of the deliverer.
+        if (deliveryDateAndTime.isBefore(LocalDateTime.now())) {
+            this.deliverer.increaseDeliveredCount();
+        }
     }
 }

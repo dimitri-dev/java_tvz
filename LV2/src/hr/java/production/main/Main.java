@@ -5,7 +5,6 @@ import hr.java.input.RestaurantModelCreator;
 import hr.java.restaurant.model.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -13,126 +12,62 @@ import java.util.stream.Stream;
 public class Main {
     static Person[] staff;
     static Meal[] meals;
+    static Order[] orders;
 
     public static void main(String[] args) {
         askForInput();
 
-        /*  Zaposlenika s najvećom plaćom */
-        var personContractMap = Stream.of(staff)
-                .collect(Collectors.toMap(
-                        entry -> entry,
-                        entry -> switch (entry) {
-                            case Chef chef -> chef.getContract();
-                            case Waiter waiter -> waiter.getContract();
-                            case Deliverer deliverer -> deliverer.getContract();
-                            default -> throw new IllegalArgumentException("Unknown person type");
-                        }
-                ));
-
-        var highestSalary = personContractMap.values().stream()
-                .map(entry -> entry.getSalary())
-                .max(BigDecimal::compareTo)
-                .orElseThrow();
-
-        var highestPaidEmployees = personContractMap.entrySet().stream()
-                .filter(entry -> entry.getValue().getSalary().compareTo(highestSalary) == 0)
-                .map(entry -> entry.getKey())
-                .toList();
-
-        System.out.println("Zaposlenic(i) s najvećom plaćom (" + highestSalary + "):");
-        highestPaidEmployees.forEach(employee -> {
-            try {
-                switch (employee) {
-                    case Chef chef -> chef.print(0, true);
-                    case Waiter waiter -> waiter.print(0, true);
-                    case Deliverer deliverer -> deliverer.print(0, true);
-                    default -> throw new IllegalArgumentException("Unknown person type");
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-
-        /* Zaposlenika s najdužim ugovorom (koji je najranije započeo) */
-
-        // TODO (imo): trebalo bi gledati endDate - startDate po contractu, ali to nije zahtjev zadatka
-        var earliestStartDate = personContractMap.values().stream()
-                .map(entry -> entry.getStartDate())
-                .min(LocalDate::compareTo)
-                .orElseThrow();
-
-        var longestContractEmployees = personContractMap.entrySet().stream()
-                .filter(entry -> entry.getValue().getStartDate().isEqual(earliestStartDate))
-                .map(entry -> entry.getKey())
-                .toList();
-
-        System.out.println("Zaposlenic(i) s najdužim ugovorom (najranije započetim):");
-        longestContractEmployees.forEach(employee -> {
-            try {
-                switch (employee) {
-                    case Chef chef -> chef.print(0, true);
-                    case Waiter waiter -> waiter.print(0, true);
-                    case Deliverer deliverer -> deliverer.print(0, true);
-                    default -> throw new IllegalArgumentException("Unknown person type");
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-
-        /* U tom polju potrebno je pronaći i ispisati podatke o jelima koja imaju najveći i najmanji broj kilokalorija. */
-        var mealPerKcal = Arrays.stream(meals)
+        var statistics = Stream.of(orders)
+                .map(order -> order.getDeliverer())
                 .collect(Collectors.groupingBy(
-                        entry -> switch (entry) {
-                            case VeganMeal veganMeal -> Arrays.stream(veganMeal.getIngredients()).map(Ingredient::getKcal).reduce(BigDecimal.ZERO, BigDecimal::add);
-                            case VegetarianMeal vegetarianMeal -> Arrays.stream(vegetarianMeal.getIngredients()).map(Ingredient::getKcal).reduce(BigDecimal.ZERO, BigDecimal::add);
-                            case MeatMeal meatMeal -> Arrays.stream(meatMeal.getIngredients()).map(Ingredient::getKcal).reduce(BigDecimal.ZERO, BigDecimal::add);
-                            default -> throw new IllegalArgumentException("Unknown meal type");
-                        },
-                        Collectors.toList()
+                        Deliverer::getDelivererType,
+                        Collectors.collectingAndThen(
+                                Collectors.toList(),
+                                list -> {
+                                    var _averageSalary = list.stream()
+                                            .map(deliverer -> deliverer.getSalary())
+                                            .reduce(BigDecimal.ZERO, BigDecimal::add)
+                                            .divide(BigDecimal.valueOf(list.size()));
+
+                                    var _numberOfDeliveredOrder = list.stream()
+                                            .map(deliverer -> deliverer.getDeliveredCount())
+                                            .reduce(0, Integer::sum);
+
+                                    var _numberOfOrders = Arrays.stream(orders)
+                                            .map(order -> order.getDeliverer().getDelivererType())
+                                            .filter(type -> type.equals(list.getFirst().getDelivererType()))
+                                            .count();
+
+                                    var _percentageOfDeliveredOrders = _numberOfDeliveredOrder / (double) _numberOfOrders;
+
+                                    return new Object() {
+                                        final Integer numberOfDeliverers = list.size();
+                                        final BigDecimal averageSalary = _averageSalary;
+                                        final Integer numberOfDeliveredOrders = _numberOfDeliveredOrder;
+                                        final Long numberOfTotalOrders = _numberOfOrders;
+                                        final Double percentageOfDeliveredOrders = _percentageOfDeliveredOrders;
+                                    };
+                                }
+                        )
                 ));
 
-        var highestKcalMeals = mealPerKcal.entrySet().stream()
-                .max(Map.Entry.comparingByKey())
-                .orElseThrow();
-
-        System.out.println(((long) highestKcalMeals.getValue().size() == 1 ? "Jelo" : "Jela") + " s najviše kcal (" + highestKcalMeals.getKey() + "):");
-        highestKcalMeals.getValue().forEach(meal -> {
-            try {
-                switch (meal) {
-                    case VeganMeal veganMeal -> veganMeal.print(0, true);
-                    case VegetarianMeal vegetarianMeal -> vegetarianMeal.print(0, true);
-                    case MeatMeal meatMeal -> meatMeal.print(0, true);
-                    default -> throw new IllegalArgumentException("Unknown meal type");
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-
-        var lowestKcalMeals = mealPerKcal.entrySet().stream()
-                .min(Map.Entry.comparingByKey())
-                .orElseThrow();
-
-        System.out.println(((long) lowestKcalMeals.getValue().size() == 1 ? "Jelo" : "Jela") + " s najmanje kcal (" + lowestKcalMeals.getKey() + "):");
-        lowestKcalMeals.getValue().forEach(meal -> {
-            try {
-                switch (meal) {
-                    case VeganMeal veganMeal -> veganMeal.print(0, true);
-                    case VegetarianMeal vegetarianMeal -> vegetarianMeal.print(0, true);
-                    case MeatMeal meatMeal -> meatMeal.print(0, true);
-                    default -> throw new IllegalArgumentException("Unknown meal type");
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
+        // foreach statistics
+        for (var entry : statistics.entrySet()) {
+            System.out.println("Deliverer type: " + entry.getKey());
+            System.out.println("Number of deliverers: " + entry.getValue().numberOfDeliverers);
+            System.out.println("Average salary: " + String.format("%.2f", entry.getValue().averageSalary));
+            System.out.println("Number of delivered orders: " + entry.getValue().numberOfDeliveredOrders);
+            System.out.println("Number of total orders: " + entry.getValue().numberOfTotalOrders);
+            System.out.println("Percentage of delivered orders: " + String.format("%.2f", entry.getValue().percentageOfDeliveredOrders * 100) + "%");
+            System.out.println("-----------------------------------");
+        }
     }
 
     public static void askForInput() {
         if (true) {
             staff = MockData.createStaff();
             meals = MockData.createMeals();
+            orders = MockData.createOrders();
         }
         else {
             var scanner = new Scanner(System.in);
