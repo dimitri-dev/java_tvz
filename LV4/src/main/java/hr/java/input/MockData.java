@@ -15,9 +15,9 @@ public class MockData {
         var chef2 = new ChefBuilder().setFirstName("Alexandra").setLastName("Polly").setContract(new Contract(new BigDecimal(77000), LocalDate.now(), LocalDate.now().plusYears(1), ContractType.FULL_TIME)).createChef();
         var chef3 = new ChefBuilder().setFirstName("Pyotr").setLastName("Garabushyev").setContract(new Contract(new BigDecimal(169000), LocalDate.now(), LocalDate.now().plusYears(1), ContractType.FULL_TIME)).createChef();
 
-        var waiter1 = new WaiterBuilder().setFirstName("Ali").setLastName("Mohammud").setContract(new Contract(new BigDecimal(66000), LocalDate.now(), LocalDate.now().plusYears(1), ContractType.PART_TIME)).createWaiter();
-        var waiter2 = new WaiterBuilder().setFirstName("Ilija").setLastName("Dostojevsky").setContract(new Contract(new BigDecimal(51000), LocalDate.now(), LocalDate.now().plusYears(1), ContractType.PART_TIME)).createWaiter();
-        var waiter3 = new WaiterBuilder().setFirstName("Marin").setLastName("Krešo").setContract(new Contract(new BigDecimal(44000), LocalDate.now(), LocalDate.now().plusYears(1), ContractType.FULL_TIME)).createWaiter();
+        var waiter1 = new WaiterBuilder().setFirstName("Ali").setLastName("Mohammud").setContract(new Contract(new BigDecimal(66000), LocalDate.now().minusDays(17), LocalDate.now().plusYears(1), ContractType.PART_TIME)).createWaiter();
+        var waiter2 = new WaiterBuilder().setFirstName("Ilija").setLastName("Dostojevsky").setContract(new Contract(new BigDecimal(51000), LocalDate.now().minusMonths(2), LocalDate.now().plusYears(1), ContractType.PART_TIME)).createWaiter();
+        var waiter3 = new WaiterBuilder().setFirstName("Marin").setLastName("Krešo").setContract(new Contract(new BigDecimal(44000), LocalDate.now().minusDays(11), LocalDate.now().plusYears(1), ContractType.FULL_TIME)).createWaiter();
 
         var deliverer1 = new DelivererBuilder().setFirstName("Velimir").setLastName("Kućanik").setContract(new Contract(new BigDecimal(54300), LocalDate.now(), LocalDate.now().plusYears(1), ContractType.FULL_TIME)).createDeliverer();
         var deliverer2 = new DelivererBuilder().setFirstName("Igor").setLastName("Smiljan").setContract(new Contract(new BigDecimal(41000), LocalDate.now(), LocalDate.now().plusYears(1), ContractType.FULL_TIME)).createDeliverer();

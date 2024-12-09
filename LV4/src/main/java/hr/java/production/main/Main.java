@@ -5,6 +5,8 @@ import hr.java.input.ModelScannerChoice;
 import hr.java.input.PersonModelCreator;
 import hr.java.input.RestaurantModelCreator;
 import hr.java.restaurant.model.*;
+import hr.java.restaurant.sort.EmployeeContractAsc;
+import hr.java.restaurant.sort.EmployeeSalaryDesc;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -16,6 +18,7 @@ import static hr.java.input.ModelScannerChoice.ChooseMeals;
 
 public class Main {
     static List<Restaurant> restaurants;
+    static List<Person> staff;
 
     public static void main(String[] args) {
         askForInput();
@@ -31,11 +34,34 @@ public class Main {
 
         System.out.println("Restaurants at which you can order '" + meal.getName() + "' are: ");
         mealsAndTheirRestaurants.get(meal).forEach(restaurant -> System.out.println(restaurant.getName()));
+
+        staff.sort(new EmployeeSalaryDesc());
+        System.out.println("Staff sorted by salary in descending order: ");
+        for (var employee : staff) {
+            try {
+                employee.print();
+            }
+            catch (Exception _) {
+                // Ignore
+            }
+        }
+
+        staff.sort(new EmployeeContractAsc());
+        System.out.println("Staff sorted by contract length in ascending order: ");
+        for (var employee : staff) {
+            try {
+                employee.print();
+            }
+            catch (Exception _) {
+                // Ignore
+            }
+        }
     }
 
     public static void askForInput() {
         if (true) {
-            restaurants = MockData.createRestaurants();
+            staff = new ArrayList<>(MockData.createStaff());
+            restaurants = new ArrayList<>(MockData.createRestaurants());
         }
         else {
             var scanner = new Scanner(System.in);
